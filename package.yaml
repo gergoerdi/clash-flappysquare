@@ -1,0 +1,110 @@
+name: clash-flappysquare
+version: 0.1.0
+category: hardware, game
+license: MIT
+
+extra-source-files:
+  - README.md
+
+custom-setup:
+  dependencies:
+    - base
+    - Cabal
+    - clashilator
+
+dependencies:
+  - base
+  - clash-prelude
+  - clash-lib
+  - clash-ghc
+
+  - ghc-typelits-natnormalise
+  - ghc-typelits-extra
+  - ghc-typelits-knownnat
+
+  - retroclash-lib ^>= 0.1.2
+
+  - clash-shake ^>= 0.3.0
+
+  - lens
+  - mtl
+
+# Anything that Clash uses by default should go here
+default-extensions:
+  - BinaryLiterals
+  - ConstraintKinds
+  - DataKinds
+  - DeriveAnyClass
+  - DeriveGeneric
+  - DeriveLift
+  - DerivingStrategies
+  - ExplicitForAll
+  - ExplicitNamespaces
+  - FlexibleContexts
+  - FlexibleInstances
+  - KindSignatures
+  - MagicHash
+  - MonoLocalBinds
+  - NoImplicitPrelude
+  - NoStarIsType
+  - NoStrictData
+  - NoStrict
+  - QuasiQuotes
+  - ScopedTypeVariables
+  - TemplateHaskellQuotes
+  - TemplateHaskell
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+
+ghc-options:
+  -fexpose-all-unfoldings -fno-worker-wrapper
+  -fplugin GHC.TypeLits.KnownNat.Solver
+  -fplugin GHC.TypeLits.Normalise
+  -fplugin GHC.TypeLits.Extra.Solver
+
+source-dirs:
+  - src
+
+flags:
+  sim:
+    manual: True
+    default: True
+  verilator:
+    manual: True
+    default: False
+
+executables:
+  flappysquare:
+    main: simulator.hs
+    dependencies:
+      - retroclash-sim
+      - text
+      - array
+      - monad-loops
+    when:
+    - condition: "!flag(sim)"
+      buildable: false
+
+  flappysquare-clash:
+    main: simulator-clash.hs
+    dependencies:
+      - retroclash-sim
+      - text
+      - array
+      - monad-loops
+    when:
+    - condition: "!flag(sim)"
+      buildable: false
+
+  flappysquare-verilator:
+    main: simulator-verilator.hs
+    other-modules: []
+    dependencies:
+      - retroclash-sim
+      - monad-loops
+    verbatim:
+      x-clashilator-top-is: FlappySquare
+    when:
+    - condition: "!(flag(sim) && flag(verilator))"
+      buildable: false
