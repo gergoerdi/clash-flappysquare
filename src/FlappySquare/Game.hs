@@ -1,15 +1,7 @@
-{-# LANGUAGE RecordWildCards, TemplateHaskell, RankNTypes, TypeApplications #-}
+{-# LANGUAGE RecordWildCards #-}
 module FlappySquare.Game where
 
-import Clash.Prelude hiding (lift)
-import Clash.Class.Counter
-import RetroClash.Utils
-
-import Data.Word
-import Control.Monad.State
--- import Control.Monad.Extra
-import Control.Lens hiding (Index, (:>))
-
+import Clash.Prelude
 
 type ScreenWidth = 640
 type ScreenHeight = 480
@@ -22,7 +14,6 @@ data St = MkSt
     , gameOver :: Bool
     }
     deriving (Show, Generic, NFDataX)
-makeLenses ''St
 
 birdX :: Index ScreenWidth
 birdX = 100
