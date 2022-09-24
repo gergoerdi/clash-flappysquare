@@ -3,7 +3,6 @@
 module FlappySquare.VGA where
 
 import Clash.Prelude
-import Clash.Class.Counter
 import RetroClash.Clock
 import Data.Maybe (isJust)
 import Data.Word (Word8)
@@ -44,9 +43,9 @@ vgaDriver
     => VGADriver dom 640 480
 vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
   where
-    stateH = register (0 :: Index 800) $ countSucc <$> stateH
+    stateH = register (0 :: Index 800) $ satAdd SatWrap 1 <$> stateH
     endLine = stateH .==. pure maxBound
-    stateV = regEn (0 :: Index 524) endLine $ countSucc <$> stateV
+    stateV = regEn (0 :: Index 524) endLine $ satAdd SatWrap 1 <$> stateV
 
     -- vgaX = mux (stateH .<. 640) (Just . fromIntegral <$> stateH) (pure Nothing)
     -- vgaY = mux (stateV .<. 480) (Just . fromIntegral <$> stateV) (pure Nothing)
