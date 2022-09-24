@@ -4,7 +4,6 @@ module FlappySquare.VGA where
 
 import Clash.Prelude
 import Clash.Class.HasDomain
-import Clash.Class.Counter
 import RetroClash.Clock
 -- import RetroClash.Utils
 import Data.Maybe (isJust)
@@ -51,14 +50,17 @@ vgaDriver
     => VGADriver dom 640 480
 vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
   where
-    cnt = register (0, 0) $ countSucc @(Index 524, Index 800) <$> cnt
-    (cntV, cntH) = unbundle cnt
+    stateH = register (0 :: Index 800) $ nextIdx <$> stateH
+    endLine = stateH .==. pure maxBound
+    stateV = regEn (0 :: Index 524) endLine $ nextIdx <$> stateV
 
-    vgaX = strengthen <$> cntH
-    vgaY = strengthen <$> cntV
+    -- vgaX = mux (stateH .<. 640) (Just . fromIntegral <$> stateH) (pure Nothing)
+    -- vgaY = mux (stateV .<. 480) (Just . fromIntegral <$> stateV) (pure Nothing)
+    vgaX = strengthen <$> stateH
+    vgaY = strengthen <$> stateV
 
-    vgaHSync = sync . betweenCO (656, 752) <$> cntH
-    vgaVSync = sync . betweenCO (491, 493) <$> cntV
+    vgaHSync = sync . betweenCO (656, 752) <$> stateH
+    vgaVSync = sync . betweenCO (491, 493) <$> stateV
     vgaDE = isJust <$> vgaX .&&. isJust <$> vgaY
 
 type Color = (Word8, Word8, Word8)
