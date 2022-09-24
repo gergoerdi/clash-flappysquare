@@ -34,8 +34,8 @@ strengthen x
 betweenCO :: (Ord a) => (a, a) -> a -> Bool
 betweenCO (lo, hi) x = lo <= x && x < hi
 
-sync :: Bool -> Bit
-sync = complement . boolToBit
+sync :: Bit -> Bool -> Bit
+sync polarity = boolToBit . (== polarity) . boolToBit
 
 vgaDriver
     :: (HiddenClockResetEnable dom)
@@ -52,8 +52,8 @@ vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
     vgaX = strengthen <$> stateH
     vgaY = strengthen <$> stateV
 
-    vgaHSync = sync . betweenCO (656, 752) <$> stateH
-    vgaVSync = sync . betweenCO (491, 493) <$> stateV
+    vgaHSync = sync low . betweenCO (656, 752) <$> stateH
+    vgaVSync = sync low . betweenCO (491, 493) <$> stateV
     vgaDE = isJust <$> vgaX .&&. isJust <$> vgaY
 
 type Color = (Word8, Word8, Word8)
