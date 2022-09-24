@@ -1,8 +1,8 @@
-# Pong
+# Flappy Square
 
-This repository implements Pong in Haskell, both as a software program
-(using SDL for input and graphics) and as a hardware FPGA design via
-Clash.
+This repository implements a Flappy Birds-like game in Haskell, both
+as a software program (using SDL for input and graphics) and as a
+hardware FPGA design via Clash.
 
 This code is part of the book *Retrocomputing with Clash: Haskell for
 FPGA Hardware Design* at <https://unsafePerform.IO/retroclash/>.
@@ -37,14 +37,16 @@ of `VIVADO_ROOT`:
   * `papilio-pro`: Papilio Pro (Spartan-6) with the Arcade MegaBoard
 
 * Xilinx Vivado toolchain
-  * `nexys-a7-50t`: Nexys A7-50T (Artix-7)
+  * `nexys-a7-50t`: Digilent Nexys A7-50T (Artix-7)
+  * `basys-3`: Digilent Basys 3 (Artix-7)
 
 * Intel Quartus toolchain
   * `de0-nano`: DE0-Nano (Cyclone IV) with Fen Logic VGA666 adapter
   * `arrow-deca`: Arrow DECA (MAX 10)
 
 * F4PGA (formerly SymbiFlow) open source toolchain
-  * `nexys-a7-50t.f4pga`: Nexys A7-50T (Artix-7)
+  * `nexys-a7-50t.f4pga`: Digilent Nexys A7-50T (Artix-7)
+  * `basys-3`: Digilent Basys 3 (Artix-7)
 
 Bitfile can be built with e.g. `./mk papilio-pro/bitfile`. For some
 targets, a rule to upload the resulting bitfile is also included,

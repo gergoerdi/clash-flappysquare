@@ -1,7 +1,6 @@
 module Top(
            input        CLK100MHZ,
            input        BTNU,
-           input        BTND,
            output       VGA_HS,
            output       VGA_VS,
            output [3:0] VGA_R,
@@ -31,8 +30,7 @@ module Top(
    topEntity u_topEntity
      (.CLK_25MHZ(CLK_25MHZ),
       .RESET(!CLK_LOCKED),
-      .BTN_UP(BTNU),
-      .BTN_DOWN(BTND),
+      .BTN(BTNU),
       .VGA_HSYNC(VGA_HS),
       .VGA_VSYNC(VGA_VS),
       .VGA_RED(VGA_RED_FULL),
