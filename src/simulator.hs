@@ -14,16 +14,12 @@ main =
     withMainWindow videoParams $ \events keyDown -> do
         guard $ not $ keyDown ScancodeEscape
 
-        let params = defaultParams
-        modify $ updateState params $ MkInputs
-            { paddleUp = keyDown ScancodeUp
-            , paddleDown = keyDown ScancodeDown
-            }
-        gets $ rasterizePattern . draw params
+        modify $ updateState $ keyDown ScancodeSpace
+        gets $ rasterizePattern . draw
   where
     videoParams = MkVideoParams
-        { windowTitle = "Pong"
-        , screenScale = 4
+        { windowTitle = "Flappy Square"
+        , screenScale = 2
         , screenRefreshRate = 60
         , reportFPS = True
         }

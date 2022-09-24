@@ -9,32 +9,29 @@ import Clash.Prelude hiding (lift)
 import RetroClash.Utils
 import Data.Word
 
-draw :: Params -> St -> Index ScreenWidth -> Index ScreenHeight -> Color
-draw MkParams{..} MkSt{..} ix iy
-    | isWall = white
-    | isPaddle = blue
-    | isBall = yellow
-    | otherwise = if _gameOver then red else gray
+import Debug.Trace
+
+draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
+draw MkSt{..} x y
+    | isBird = yellow
+    | isWall = if offset < 2 then gray else if offset < 10 then lightGreen else green
+    | otherwise = if gameOver then red else blue
   where
-    x = fromIntegral ix
-    y = fromIntegral iy
+    isBird =
+        x `between` (80, 120) &&
+        fromIntegral y `between` (birdY - 20, birdY + 20)
 
-    rect (x0, y0) (w, h) =
-        x `between` (x0, x0 + w) &&
-        y `between` (y0, y0 + h)
+    isWall =
+      y < wallsTop !! idx ||
+      y > wallsBottom !! idx
 
-    isWall = x < wallSize || y < wallSize || y >= (snatToNum (SNat @ScreenHeight) - wallSize)
+    (idx, offset) = bitCoerce @_ @(Index 10, Index 64) $ satAdd SatWrap x wallOffset
 
-    paddleStart = snatToNum (SNat @ScreenWidth) - paddleWidth
-    isPaddle = rect (paddleStart, _paddleY) (paddleWidth, paddleHeight)
-
-    (ballX, _) = _ballH
-    (ballY, _) = _ballV
-    isBall = rect (ballX, ballY) (ballSize, ballSize)
-
-white, blue, yellow, red, gray :: Color
+white, blue, yellow, red, gray, green, lightGreen :: Color
 white = (0xff, 0xff, 0xff)
 blue = (0x40, 0x80, 0xf0)
 yellow = (0xf0, 0xe0, 0x40)
 red = (0x80, 0x00, 0x00)
+green = (0x92, 0xe2, 0x44)
+lightGreen = (0xa5, 0xff, 0x4d)
 gray = (0x30, 0x30, 0x30)

@@ -37,8 +37,7 @@ main = withRunner $ \runCycle -> do
 
         let input = INPUT
                 { iRESET = low
-                , iBTN_UP = boolToBit $ keyDown ScancodeUp
-                , iBTN_DOWN = boolToBit $ keyDown ScancodeDown
+                , iBTN = boolToBit $ keyDown ScancodeSpace
                 }
 
         untilM_ (return ()) $ do
