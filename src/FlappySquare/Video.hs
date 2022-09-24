@@ -4,15 +4,10 @@ module FlappySquare.Video where
 
 import FlappySquare.Game
 import FlappySquare.VGA
-
-import Clash.Prelude hiding (lift)
-import RetroClash.Utils
-import Data.Word
-
-import Debug.Trace
+import Clash.Prelude
 
 draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
-draw MkSt{..} x y
+draw s@MkSt{..} x y
     | isBird = yellow
     | isWall = if offset < 2 then gray else if offset < 10 then lightGreen else green
     | otherwise = if gameOver then red else blue
@@ -25,7 +20,7 @@ draw MkSt{..} x y
       y < wallsTop !! idx ||
       y > wallsBottom !! idx
 
-    (idx, offset) = bitCoerce @_ @(Index 10, Index 64) $ satAdd SatWrap x wallOffset
+    (idx, offset) = wallAt x s
 
 white, blue, yellow, red, gray, green, lightGreen :: Color
 white = (0xff, 0xff, 0xff)

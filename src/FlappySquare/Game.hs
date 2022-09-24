@@ -51,8 +51,10 @@ updateState btn s@MkSt{..}
           (birdY - 20) < fromIntegral (wallsTop !! idx) ||
           (birdY + 20) > fromIntegral (wallsBottom !! idx)
     }
-
   where
-    (idx, offset) = bitCoerce @_ @(Index 10, Index 64) $ satAdd SatWrap birdX wallOffset
+    (idx, offset) = wallAt birdX s
+
+wallAt :: Index ScreenWidth -> St -> (Index 10, Index 64)
+wallAt x MkSt{..} = bitCoerce $ satAdd SatWrap x wallOffset
 
 x `between` (lo, hi) = lo <= x && x <= hi

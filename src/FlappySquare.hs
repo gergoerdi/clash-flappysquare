@@ -28,8 +28,7 @@ topEntity = withEnableGen board
         VGADriver{..} = vgaDriver
         frameEnd = isFalling False (isJust <$> vgaY)
 
-        st = regEn initState frameEnd $ (updateState <$> btn <*> st)
-
+        st = regEn initState frameEnd $ updateState <$> btn <*> st
         rgb = draw' <$> st <*> vgaX <*> vgaY
 
 draw' :: St -> Maybe (Index ScreenWidth) -> Maybe (Index ScreenHeight) -> Color
