@@ -22,12 +22,12 @@ main = shakeArgs shakeOptions{ shakeFiles = outDir } do
 
     (clash, kit) <- clashRules (outDir </> "clash") Verilog
         [ "src" ]
-        "FlappySquare"
+        "FlappySquare.Circuit"
         [ "-Wno-partial-type-signatures"
         , "-fclash-intwidth=32" -- To play nicely with Spartan 3 and 6
         ] $
         return ()
-    phony "clashi" $ clash ["--interactive", "src/FlappySquare.hs"]
+    phony "clashi" $ clash ["--interactive", "src/FlappySquare/Circuit.hs"]
 
     let boards =
             [ ("nexys-a7-50t", "nexys-a7-50t", Xilinx.vivado nexysA750T, [])

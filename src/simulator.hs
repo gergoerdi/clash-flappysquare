@@ -3,8 +3,7 @@ module Main where
 
 import Prelude
 
-import FlappySquare.Game
-import FlappySquare.Video
+import FlappySquare
 import RetroClash.Sim.SDL
 import Control.Monad.State
 

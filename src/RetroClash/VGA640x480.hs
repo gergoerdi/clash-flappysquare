@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables, NumericUnderscores #-}
 {-# LANGUAGE DuplicateRecordFields, RecordWildCards, ApplicativeDo #-}
-module FlappySquare.VGA where
+module RetroClash.VGA640x480 where
 
 import Clash.Prelude
 import RetroClash.Clock
@@ -31,16 +31,19 @@ strengthen x
   | x <= fromIntegral (maxBound @(Index n)) = Just $ fromIntegral x
   | otherwise = Nothing
 
-betweenCO :: (Ord a) => (a, a) -> a -> Bool
-betweenCO (lo, hi) x = lo <= x && x < hi
+between :: (Ord a) => a -> (a, a) -> Bool
+x `between` (lo, hi) = lo <= x && x <= hi
 
 sync :: Bit -> Bool -> Bit
 sync polarity = boolToBit . (== polarity) . boolToBit
 
+type ScreenWidth = 640
+type ScreenHeight = 480
+
 vgaDriver
     :: (HiddenClockResetEnable dom)
     => (DomainPeriod dom ~ HzToPeriod 25_175_000)
-    => VGADriver dom 640 480
+    => VGADriver dom ScreenWidth ScreenHeight
 vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
   where
     stateH = register (0 :: Index 800) $ satAdd SatWrap 1 <$> stateH
@@ -52,8 +55,8 @@ vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
     vgaX = strengthen <$> stateH
     vgaY = strengthen <$> stateV
 
-    vgaHSync = sync low . betweenCO (656, 752) <$> stateH
-    vgaVSync = sync low . betweenCO (491, 493) <$> stateV
+    vgaHSync = sync low . (`between` (656, 751)) <$> stateH
+    vgaVSync = sync low . (`between` (491, 492)) <$> stateV
     vgaDE = isJust <$> vgaX .&&. isJust <$> vgaY
 
 type Color = (Word8, Word8, Word8)

@@ -24,9 +24,6 @@ dependencies:
 
   - retroclash-lib ^>= 0.1.2
 
-  - clash-shake ^>= 0.3.0
-  - mtl
-
 # Anything that Clash uses by default should go here
 default-extensions:
   - BinaryLiterals
@@ -80,6 +77,7 @@ executables:
       - text
       - array
       - monad-loops
+      - mtl
     when:
     - condition: "!flag(sim)"
       buildable: false
@@ -91,6 +89,7 @@ executables:
       - text
       - array
       - monad-loops
+      - mtl
     when:
     - condition: "!flag(sim)"
       buildable: false
@@ -101,8 +100,9 @@ executables:
     dependencies:
       - retroclash-sim
       - monad-loops
+      - mtl
     verbatim:
-      x-clashilator-top-is: FlappySquare
+      x-clashilator-top-is: FlappySquare.Circuit
     when:
     - condition: "!(flag(sim) && flag(verilator))"
       buildable: false

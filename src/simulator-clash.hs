@@ -3,10 +3,10 @@ module Main where
 
 import Clash.Prelude
 
-import FlappySquare
+import FlappySquare.Circuit
 import RetroClash.Utils
 import RetroClash.VGA (vga640x480at60)
-import FlappySquare.VGA
+import RetroClash.VGA640x480
 import RetroClash.Sim.IO
 import RetroClash.Sim.SDL
 import RetroClash.Sim.VGA
