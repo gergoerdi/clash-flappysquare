@@ -14,7 +14,6 @@ import FlappySquare
 -- | 25 MHz clock, needed for the VGA mode we use.
 createDomain vSystem{vName="Dom25", vPeriod = hzToPeriod 25_175_000}
 
-{-# NOINLINE topEntity #-}
 topEntity
     :: "CLK_25MHZ" ::: Clock Dom25
     -> "RESET"     ::: Reset Dom25
@@ -22,12 +21,19 @@ topEntity
     -> "VGA"       ::: VGAOut Dom25
 topEntity = withEnableGen board
   where
-    board (fmap fromActive -> btn) = vgaOut vgaSync rgb
+    board (fmap fromActive -> btn) = vga
       where
-        VGADriver{..} = vgaDriver
-        frameEnd = isFalling False (isJust <$> vgaY)
+        state = regEn initState newFrame $ updateState <$> btn <*> state
+        (vga, newFrame) = video state
 
-        st = regEn initState frameEnd $ updateState <$> btn <*> st
-        rgb = draw <$> st <*> (fromMaybe 0 <$> vgaX) <*> (fromMaybe 0 <$> vgaY)
+video
+    :: (HiddenClockResetEnable dom)
+    => (DomainPeriod dom ~ HzToPeriod 25_175_000)
+    => Signal dom St -> (VGAOut dom, Signal dom Bool)
+video state = (vgaOut vgaSync rgb, newFrame)
+  where
+    VGADriver{..} = vgaDriver640x480at60
+    newFrame = isFalling False (isJust <$> vgaY)
+    rgb = draw <$> state <*> (fromJust <$> vgaX) <*> (fromJust <$> vgaY)
 
 makeTopEntity 'topEntity

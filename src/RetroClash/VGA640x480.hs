@@ -40,23 +40,33 @@ sync polarity = boolToBit . (== polarity) . boolToBit
 type ScreenWidth = 640
 type ScreenHeight = 480
 
-vgaDriver
+countWhen
+    :: (KnownNat n, 1 <= n, HiddenClockResetEnable dom)
+    => Signal dom Bool
+    -> (Signal dom (Index n), Signal dom Bool)
+countWhen inc = (cnt, inc .&&. cnt .==. pure maxBound)
+  where
+    cnt = regEn 0 inc $ satAdd SatWrap 1 <$> cnt
+
+count
+    :: (KnownNat n, 1 <= n, HiddenClockResetEnable dom)
+    => (Signal dom (Index n), Signal dom Bool)
+count = countWhen (pure True)
+
+vgaDriver640x480at60
     :: (HiddenClockResetEnable dom)
     => (DomainPeriod dom ~ HzToPeriod 25_175_000)
     => VGADriver dom ScreenWidth ScreenHeight
-vgaDriver = VGADriver{ vgaSync = VGASync{..}, .. }
+vgaDriver640x480at60 = VGADriver{ vgaSync = VGASync{..}, .. }
   where
-    stateH = register (0 :: Index 800) $ satAdd SatWrap 1 <$> stateH
-    endLine = stateH .==. pure maxBound
-    stateV = regEn (0 :: Index 524) endLine $ satAdd SatWrap 1 <$> stateV
+    (hcount, endLine) = count @800
+    (vcount, _) = countWhen @524 endLine
 
-    -- vgaX = mux (stateH .<. 640) (Just . fromIntegral <$> stateH) (pure Nothing)
-    -- vgaY = mux (stateV .<. 480) (Just . fromIntegral <$> stateV) (pure Nothing)
-    vgaX = strengthen <$> stateH
-    vgaY = strengthen <$> stateV
+    vgaX = strengthen <$> hcount
+    vgaY = strengthen <$> vcount
 
-    vgaHSync = sync low . (`between` (656, 751)) <$> stateH
-    vgaVSync = sync low . (`between` (491, 492)) <$> stateV
+    vgaHSync = sync low . (`between` (640 + 16, 640 + 16 + 96 - 1)) <$> hcount
+    vgaVSync = sync low . (`between` (480 + 11, 480 + 11 + 2 - 1)) <$> vcount
     vgaDE = isJust <$> vgaX .&&. isJust <$> vgaY
 
 type Color = (Word8, Word8, Word8)
