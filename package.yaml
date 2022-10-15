@@ -57,6 +57,7 @@ ghc-options:
   -fplugin GHC.TypeLits.KnownNat.Solver
   -fplugin GHC.TypeLits.Normalise
   -fplugin GHC.TypeLits.Extra.Solver
+  -O2
 
 source-dirs:
   - src
