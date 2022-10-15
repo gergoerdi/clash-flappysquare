@@ -6,6 +6,8 @@ packages:
   - clash-lib-1.6.4
   - clash-ghc-1.6.4
 
+  - sdl2-2.5.4.0
+
 flags:
     clash-prelude:
       multiple-hidden: false
