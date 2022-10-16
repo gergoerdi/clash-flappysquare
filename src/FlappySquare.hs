@@ -42,7 +42,7 @@ updateState btn s@MkSt{..}
   | gameOver = initState
   | otherwise = s
     { wallOffset = satAdd SatWrap 1 wallOffset
-    , birdSpeed = birdSpeed + if btn then -15 else 3
+    , birdSpeed = birdSpeed + if btn then -5 else 1
     , birdY = birdY + birdSpeed `shiftR` 3
     , gameOver = not $ birdY `between` (fromIntegral top + 20, fromIntegral bottom - 20)
     }
