@@ -23,6 +23,9 @@ initState = MkSt
 birdX :: Index ScreenWidth
 birdX = 100
 
+around :: (Ord a, Num a) => a -> (a, a) -> Bool
+x `around` (p, r) = x `between` (p - r, p + r)
+
 walls :: Vec 10 (Index ScreenHeight, Index ScreenHeight)
 walls =
     (130, 290) :>
@@ -38,16 +41,17 @@ walls =
     Nil
 
 updateState :: Bool -> St -> St
-updateState btn s@MkSt{..}
+updateState btn st@MkSt{..}
   | gameOver = initState
-  | otherwise = s
+  | otherwise = st
     { wallOffset = satAdd SatWrap 1 wallOffset
     , birdSpeed = birdSpeed + if btn then -5 else 1
     , birdY = birdY + birdSpeed `shiftR` 3
-    , gameOver = not $ birdY `between` (fromIntegral top + 20, fromIntegral bottom - 20)
+    , gameOver = not birdClear
     }
   where
-    (top, bottom, offset) = wallAt birdX s
+    (top, bottom, offset) = wallAt birdX st
+    birdClear = fromIntegral birdY `between` (top + 20, bottom - 20)
 
 wallAt :: Index ScreenWidth -> St -> (Index ScreenHeight, Index ScreenHeight, Index 64)
 wallAt x MkSt{..} = (top, bottom, offset)
@@ -57,17 +61,21 @@ wallAt x MkSt{..} = (top, bottom, offset)
     (top, bottom) = walls !! idx
 
 draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
-draw s@MkSt{..} x y
+draw st@MkSt{..} x y
     | isBird = yellow
-    | isWall = if offset < 2 then gray else if offset < 10 then lightGreen else green
+    | isWall = wallColor
     | otherwise = if gameOver then red else blue
   where
     isBird =
-        x `between` (80, 120) &&
-        fromIntegral y `between` (birdY - 20, birdY + 20)
+        x `around` (birdX, 20) &&
+        y `around` (fromIntegral birdY, 20)
 
     isWall = not $ y `between` (top, bottom)
-    (top, bottom, offset) = wallAt x s
+    (top, bottom, offset) = wallAt x st
+    wallColor
+      | offset < 2  = gray
+      | offset < 10 = lightGreen
+      | otherwise   = green
 
 blue, yellow, red, gray, green, lightGreen :: Color
 blue = (0x40, 0x80, 0xf0)
