@@ -76,8 +76,6 @@ executables:
     dependencies:
       - retroclash-sim
       - text
-      - array
-      - monad-loops
       - mtl
     when:
     - condition: "!flag(sim)"
@@ -87,8 +85,6 @@ executables:
     main: simulator-clash.hs
     dependencies:
       - retroclash-sim
-      - text
-      - array
       - monad-loops
       - mtl
     when:
