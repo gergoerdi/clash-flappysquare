@@ -1,23 +1,23 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RecordWildCards, MultiWayIf #-}
 module FlappySquare where
 
 import Clash.Prelude
 import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
 
 data St = MkSt
-    { wallOffset :: Index 640
-    , birdSpeed :: Signed 10
-    , birdY :: Signed 10
-    , gameOver :: Bool
+    { birdY      :: Int
+    , birdSpeed  :: Int
+    , wallOffset :: Index 640
+    , gameOver   :: Bool
     }
     deriving (Show, Generic, NFDataX)
 
 initState :: St
 initState = MkSt
     { wallOffset = 0
-    , birdSpeed = 0
-    , birdY = 200
-    , gameOver = False
+    , birdSpeed  = 0
+    , birdY      = 200
+    , gameOver   = False
     }
 
 birdX :: Index ScreenWidth
@@ -45,7 +45,7 @@ updateState btn st@MkSt{..}
   | gameOver = initState
   | otherwise = st
     { wallOffset = satAdd SatWrap 1 wallOffset
-    , birdSpeed = birdSpeed + if btn then -5 else 1
+    , birdSpeed = if btn then birdSpeed - 5 else birdSpeed + 1
     , birdY = birdY + birdSpeed `shiftR` 3
     , gameOver = not birdClear
     }
@@ -57,7 +57,7 @@ wallAt :: Index ScreenWidth -> St -> (Index ScreenHeight, Index ScreenHeight, In
 wallAt x MkSt{..} = (top, bottom, offset)
   where
     idx :: Index 10
-    (idx, offset) = bitCoerce $ satAdd SatWrap x wallOffset
+    (idx, offset) = bitCoerce (satAdd SatWrap x wallOffset)
     (top, bottom) = walls !! idx
 
 draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
@@ -70,7 +70,7 @@ draw st@MkSt{..} x y
         x `around` (birdX, 20) &&
         y `around` (fromIntegral birdY, 20)
 
-    isWall = not $ y `between` (top, bottom)
+    isWall = not (y `between` (top, bottom))
     (top, bottom, offset) = wallAt x st
     wallColor
       | offset < 2  = gray

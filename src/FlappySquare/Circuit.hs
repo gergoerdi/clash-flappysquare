@@ -19,11 +19,11 @@ topEntity
     -> "RESET"     ::: Reset Dom25
     -> "BTN"       ::: Signal Dom25 (Active High)
     -> "VGA"       ::: VGAOut Dom25
-topEntity = withEnableGen board
+topEntity clk rst = withEnableGen board clk rst
   where
     board (fmap fromActive -> btn) = vga
       where
-        state = regEn initState newFrame $ updateState <$> btn <*> state
+        state = regEn initState newFrame (updateState <$> btn <*> state)
         (vga, newFrame) = video state
 
 video
