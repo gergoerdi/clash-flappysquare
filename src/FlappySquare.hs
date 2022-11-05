@@ -7,14 +7,14 @@ import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
 data St = MkSt
     { birdY      :: Int
     , birdSpeed  :: Int
-    , wallOffset :: Index 640
+    , pipeOffset :: Index 640
     , gameOver   :: Bool
     }
     deriving (Show, Generic, NFDataX)
 
 initState :: St
 initState = MkSt
-    { wallOffset = 0
+    { pipeOffset = 0
     , birdSpeed  = 0
     , birdY      = 200
     , gameOver   = False
@@ -26,8 +26,8 @@ birdX = 100
 around :: (Ord a, Num a) => a -> (a, a) -> Bool
 x `around` (p, r) = x `between` (p - r, p + r)
 
-walls :: Vec 10 (Index ScreenHeight, Index ScreenHeight)
-walls =
+pipes :: Vec 10 (Index ScreenHeight, Index ScreenHeight)
+pipes =
     (130, 290) :>
     (80,  280) :>
     (60,  270) :>
@@ -44,35 +44,35 @@ updateState :: Bool -> St -> St
 updateState btn st@MkSt{..}
   | gameOver = initState
   | otherwise = st
-    { wallOffset = satAdd SatWrap 1 wallOffset
+    { pipeOffset = satAdd SatWrap 1 pipeOffset
     , birdSpeed = if btn then birdSpeed - 5 else birdSpeed + 1
     , birdY = birdY + birdSpeed `shiftR` 3
     , gameOver = not birdClear
     }
   where
-    (top, bottom, offset) = wallAt birdX st
+    (top, bottom, offset) = pipeAt birdX st
     birdClear = fromIntegral birdY `between` (top + 20, bottom - 20)
 
-wallAt :: Index ScreenWidth -> St -> (Index ScreenHeight, Index ScreenHeight, Index 64)
-wallAt x MkSt{..} = (top, bottom, offset)
+pipeAt :: Index ScreenWidth -> St -> (Index ScreenHeight, Index ScreenHeight, Index 64)
+pipeAt x MkSt{..} = (top, bottom, offset)
   where
     idx :: Index 10
-    (idx, offset) = bitCoerce (satAdd SatWrap x wallOffset)
-    (top, bottom) = walls !! idx
+    (idx, offset) = bitCoerce (satAdd SatWrap x pipeOffset)
+    (top, bottom) = pipes !! idx
 
 draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
 draw st@MkSt{..} x y
     | isBird = yellow
-    | isWall = wallColor
+    | isPipe = pipeColor
     | otherwise = if gameOver then red else blue
   where
     isBird =
         x `around` (birdX, 20) &&
         y `around` (fromIntegral birdY, 20)
 
-    isWall = not (y `between` (top, bottom))
-    (top, bottom, offset) = wallAt x st
-    wallColor
+    isPipe = not (y `between` (top, bottom))
+    (top, bottom, offset) = pipeAt x st
+    pipeColor
       | offset < 2  = gray
       | offset < 10 = lightGreen
       | otherwise   = green

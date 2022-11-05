@@ -10,13 +10,13 @@ import Control.Monad.State
 
 main :: IO ()
 main =
-    flip evalStateT initState{ wallOffset = 40, birdY = 150 } $
+    flip evalStateT initState{ pipeOffset = 40, birdY = 150 } $
     withMainWindow videoParams \events keyDown -> do
         guard $ not $ keyDown ScancodeEscape
 
         modify \st@MkSt{..} -> if
-            | keyDown ScancodeRight -> st{ wallOffset = satAdd SatWrap wallOffset 1 }
-            | keyDown ScancodeLeft -> st{ wallOffset = satSub SatWrap wallOffset 1 }
+            | keyDown ScancodeRight -> st{ pipeOffset = satAdd SatWrap pipeOffset 1 }
+            | keyDown ScancodeLeft -> st{ pipeOffset = satSub SatWrap pipeOffset 1 }
             | keyDown ScancodeDown -> st{ birdY = birdY + 1 }
             | keyDown ScancodeUp -> st{ birdY = birdY - 1 }
             | keyDown ScancodeSpace -> st{ gameOver = not gameOver }
