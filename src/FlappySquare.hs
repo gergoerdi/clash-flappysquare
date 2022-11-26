@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, MultiWayIf #-}
+{-# LANGUAGE RecordWildCards #-}
 module FlappySquare where
 
 import Clash.Prelude

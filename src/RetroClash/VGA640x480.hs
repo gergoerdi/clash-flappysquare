@@ -35,7 +35,7 @@ between :: (Ord a) => a -> (a, a) -> Bool
 x `between` (lo, hi) = lo <= x && x <= hi
 
 sync :: Bit -> Bool -> Bit
-sync polarity = boolToBit . (== polarity) . boolToBit
+sync polarity b = if b then polarity else complement polarity
 
 type ScreenWidth = 640
 type ScreenHeight = 480
