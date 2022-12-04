@@ -7,7 +7,7 @@ import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
 data St = MkSt
     { birdY      :: Int
     , birdSpeed  :: Int
-    , pipeOffset :: Index 640
+    , pipeOffset :: Index ScreenWidth
     , gameOver   :: Bool
     }
     deriving (Show, Generic, NFDataX)
