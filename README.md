@@ -4,8 +4,10 @@ This repository implements a Flappy Birds-like game in Haskell, both
 as a software program (using SDL for input and graphics) and as a
 hardware FPGA design via Clash.
 
-This code is part of the book *Retrocomputing with Clash: Haskell for
-FPGA Hardware Design* at <https://unsafePerform.IO/retroclash/>.
+This code is part of my talk *Clash: Haskell for FPGA Design: It's
+easy as 1-2-3...419,200* at Haskell eXchange 2022. 
+See <https://unsafePerform.IO/retroclash/flappy/> for futher details,
+including the slides from my talk.
 
 ## Building
 
