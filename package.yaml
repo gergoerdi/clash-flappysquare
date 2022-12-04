@@ -81,6 +81,12 @@ executables:
     - condition: "!flag(sim)"
       buildable: false
 
+  flappysquare-renderer:
+    main: renderer.hs
+    dependencies:
+      - JuicyPixels
+      - mtl
+      
   flappysquare-editor:
     main: simulator-editor.hs
     dependencies:
