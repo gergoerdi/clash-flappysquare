@@ -56,7 +56,7 @@ e.g. `./mk arrow-deca/upload`.
 
 Adding support for other Intel, Xilinx, or F4PGA based FPGA dev boards
 is very straightforward with the included Shake rules, as long as they
-have VGA output and at least two input pushbuttons.
+have VGA output and at least one input pushbutton.
 
 Targeting other FPGA toolchains will require adding support in the
 Shake rules. Alternatively, you can always just run Clash, and import
