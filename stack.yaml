@@ -6,5 +6,5 @@ packages:
 extra-deps:
   - retroclash-lib-0.1.2
   - retroclash-sim-0.1.1
-  - clashilator-0.1.2.1
+  - clashilator-0.1.4
   - clash-shake-0.3.1.2
