@@ -5,10 +5,10 @@ import Clash.Prelude
 import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
 
 data St = MkSt
-    { birdY      :: Int
-    , birdSpeed  :: Int
-    , pipeOffset :: Index ScreenWidth
-    , gameOver   :: Bool
+    { birdY      :: !(Signed 10)
+    , birdSpeed  :: !(Signed 10)
+    , pipeOffset :: !(Index ScreenWidth)
+    , gameOver   :: !Bool
     }
     deriving (Show, Generic, NFDataX)
 
