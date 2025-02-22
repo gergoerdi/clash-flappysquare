@@ -8,6 +8,7 @@ import Codec.Picture
 
 import System.IO (hSetBuffering, stdout, BufferMode( NoBuffering ))
 import Text.Printf
+import Control.Monad
 import Control.Monad.State.Strict
 import Control.Monad.IO.Class
 

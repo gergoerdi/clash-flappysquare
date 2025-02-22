@@ -5,6 +5,7 @@ import Prelude
 
 import FlappySquare
 import RetroClash.Sim.SDL
+import Control.Monad
 import Control.Monad.State
 
 main :: IO ()
