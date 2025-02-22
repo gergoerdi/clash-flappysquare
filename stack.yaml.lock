@@ -40,19 +40,19 @@ packages:
   original:
     hackage: concurrent-supply-0.1.8
 - completed:
-    hackage: retroclash-lib-0.1.2.2@sha256:4ddf6efb9c8d8da98333ecebdd9d0aee0d99c40767721c16879e80f377175438,3303
+    hackage: retroclash-lib-0.1.2.3@sha256:c3b2c2757f4950a42663f2bc1693c0b81ca37885955ac1702e59dcee87900b49,3221
     pantry-tree:
-      sha256: 18599fffb446ddf4703149874e67782cd055a35645ebefdd5b2beb8f4c8d988c
+      sha256: a03b5429836435d27a2bd44a7c67941ba6eb9c5ca3115c86d93ced62e9b0cd09
       size: 1274
   original:
-    hackage: retroclash-lib-0.1.2.2
+    hackage: retroclash-lib-0.1.2.3
 - completed:
-    hackage: retroclash-sim-0.1.1@sha256:cd0079dc90fdf50d69bad2ac415745222838280b1615a7149ffe8c38e4b94183,2433
+    hackage: retroclash-sim-0.1.2@sha256:23c926d83774aeeae7b72118bad2dea813f38066fc210483337efb910140eb72,2457
     pantry-tree:
-      sha256: 39e7b05e3de9cc7a7ad05e15092a8f7bfb6cb371de7cbf7f80542a8796673466
+      sha256: 2b1b8c986c82b53be3b4ad6d72ede94149de7ae616c7ee6f057d3de8821656f3
       size: 377
   original:
-    hackage: retroclash-sim-0.1.1
+    hackage: retroclash-sim-0.1.2
 - completed:
     hackage: clashilator-0.1.4@sha256:fc7109a1f7f5ce63a8e03bbf2481bcca3995675a05f5e64fea3d6cd5f1a20d86,2046
     pantry-tree:
