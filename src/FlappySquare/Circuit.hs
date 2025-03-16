@@ -26,10 +26,14 @@ topEntity clk rst = withEnableGen board clk rst
         state = regEn initState newFrame (updateState <$> btn <*> state)
         (vga, newFrame) = video state
 
+{-# NOINLINE video #-}
 video
     :: (HiddenClockResetEnable dom)
     => (DomainPeriod dom ~ HzToPeriod 25_175_000)
-    => Signal dom St -> (VGAOut dom, Signal dom Bool)
+    => "STATE" ::: Signal dom St
+    -> ("VGA" ::: VGAOut dom
+       , "NEW_FRAME" ::: Signal dom Bool
+       )
 video state = (vgaOut vgaSync rgb, newFrame)
   where
     VGADriver{..} = vgaDriver640x480at60

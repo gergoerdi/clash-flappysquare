@@ -32,6 +32,7 @@ strengthen x
   | x <= fromIntegral (maxBound @(Index n)) = Just $ fromIntegral x
   | otherwise = Nothing
 
+{-# INLINE between #-}
 between :: (Ord a) => a -> (a, a) -> Bool
 x `between` (lo, hi) = lo <= x && x <= hi
 
@@ -41,6 +42,7 @@ sync polarity b = if b then polarity else complement polarity
 type ScreenWidth = 640
 type ScreenHeight = 480
 
+{-# NOINLINE vgaDriver640x480at60 #-}
 vgaDriver640x480at60
     :: (HiddenClockResetEnable dom)
     => (DomainPeriod dom ~ HzToPeriod 25_175_000)
