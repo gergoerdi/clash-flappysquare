@@ -14,7 +14,7 @@ custom-setup:
 
 dependencies:
   - base
-  - clash-prelude
+  - clash-prelude >= 1.8.1 && < 2.0
   - clash-lib
   - clash-ghc
 

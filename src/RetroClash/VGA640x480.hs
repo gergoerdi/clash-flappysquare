@@ -6,6 +6,7 @@ import Clash.Prelude
 import RetroClash.Clock
 import Data.Maybe (isJust)
 import Data.Word (Word8)
+import Clash.Class.Counter
 
 data VGASync dom = VGASync
     { vgaHSync :: "HSYNC" ::: Signal dom Bit
@@ -40,27 +41,14 @@ sync polarity b = if b then polarity else complement polarity
 type ScreenWidth = 640
 type ScreenHeight = 480
 
-countWhen
-    :: (KnownNat n, 1 <= n, HiddenClockResetEnable dom)
-    => Signal dom Bool
-    -> (Signal dom (Index n), Signal dom Bool)
-countWhen inc = (cnt, inc .&&. cnt .==. pure maxBound)
-  where
-    cnt = regEn 0 inc $ satAdd SatWrap 1 <$> cnt
-
-count
-    :: (KnownNat n, 1 <= n, HiddenClockResetEnable dom)
-    => (Signal dom (Index n), Signal dom Bool)
-count = countWhen (pure True)
-
 vgaDriver640x480at60
     :: (HiddenClockResetEnable dom)
     => (DomainPeriod dom ~ HzToPeriod 25_175_000)
     => VGADriver dom ScreenWidth ScreenHeight
 vgaDriver640x480at60 = VGADriver{ vgaSync = VGASync{..}, .. }
   where
-    (hcount, endLine) = count @800
-    (vcount, _) = countWhen @524 endLine
+    cnt = register (0, 0) $ countSucc @(Index 524, Index 800) <$> cnt
+    (vcount, hcount) = unbundle cnt
 
     vgaX = strengthen <$> hcount
     vgaY = strengthen <$> vcount
