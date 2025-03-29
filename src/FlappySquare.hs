@@ -26,6 +26,12 @@ birdX = 100
 around :: (Ord a, Num a) => a -> (a, a) -> Bool
 x `around` (p, r) = x `between` (p - r, p + r)
 
+birdWidth :: Index ScreenWidth
+birdWidth = 20
+
+birdHeight :: Signed 10
+birdHeight = 20
+
 pipes :: Vec 10 (Index ScreenHeight, Index ScreenHeight)
 pipes =
     (130, 290) :>
@@ -67,10 +73,10 @@ draw st@MkSt{..} x y
     | otherwise = if gameOver then red else blue
   where
     isBird =
-        x `around` (birdX, 20) &&
-        y `around` (fromIntegral birdY, 20)
+        x `around` (birdX, birdWidth) &&
+        fromIntegral y `around` (birdY, birdHeight)
 
-    isPipe = not (y `between` (top, bottom))
+    isPipe = not (fromIntegral y `between` (top, bottom))
     (top, bottom, offset) = pipeAt x st
     pipeColor
         | offset < (minBound + 2)  = gray
