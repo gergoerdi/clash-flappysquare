@@ -47,13 +47,13 @@ pipes =
 
 updateState :: Bool -> St -> St
 updateState btn st@MkSt{..}
-  | gameOver = initState
-  | otherwise = st
-    { pipeOffset = satAdd SatWrap 1 pipeOffset
-    , birdSpeed = if btn then birdSpeed - 5 else birdSpeed + 1
-    , birdY = birdY + birdSpeed `shiftR` 3
-    , gameOver = not birdClear
-    }
+    | gameOver = initState
+    | otherwise = st
+        { pipeOffset = satAdd SatWrap 1 pipeOffset
+        , birdSpeed = if btn then birdSpeed - 5 else birdSpeed + 1
+        , birdY = birdY + birdSpeed `shiftR` 3
+        , gameOver = not birdClear
+        }
   where
     (top1, bottom1, _) = pipeAt (birdX - birdWidth) st
     (top2, bottom2, _) = pipeAt (birdX + birdWidth) st
@@ -77,7 +77,8 @@ draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
 draw st@MkSt{..} x y
     | isBird = yellow
     | isPipe = pipeColor
-    | otherwise = if gameOver then red else blue
+    | gameOver = red
+    | otherwise = blue
   where
     isBird =
         x `around` (birdX, birdWidth) &&
