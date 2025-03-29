@@ -4,10 +4,15 @@ module FlappySquare where
 import Clash.Prelude
 import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
 
+type PipeGap = 4
+type PipeWidth = 64
+type NumPipes = 4
+
+
 data St = MkSt
     { birdY      :: !(Signed 10)
     , birdSpeed  :: !(Signed 10)
-    , pipeOffset :: !(Index ScreenWidth)
+    , pipeOffset :: !(Index (NumPipes * PipeWidth * PipeGap))
     , gameOver   :: !Bool
     }
     deriving (Show, Generic, NFDataX)
@@ -32,18 +37,12 @@ birdWidth = 20
 birdHeight :: Signed 10
 birdHeight = 20
 
-pipes :: Vec 10 (Index ScreenHeight, Index ScreenHeight)
+pipes :: Vec NumPipes (Index ScreenHeight, Index ScreenHeight)
 pipes =
     (130, 290) :>
     (80,  280) :>
     (60,  270) :>
     (90,  320) :>
-    (110, 430) :>
-    (200, 410) :>
-    (230, 400) :>
-    (130, 380) :>
-    (90,  320) :>
-    (110, 280) :>
     Nil
 
 updateState :: Bool -> St -> St
@@ -56,15 +55,23 @@ updateState btn st@MkSt{..}
     , gameOver = not birdClear
     }
   where
-    (top, bottom, offset) = pipeAt birdX st
-    birdClear = fromIntegral birdY `between` (top + 20, bottom - 20)
+    (top1, bottom1, _) = pipeAt (birdX - birdWidth) st
+    (top2, bottom2, _) = pipeAt (birdX + birdWidth) st
+    birdClear = all (birdY `between`)
+        [ (fromIntegral top1 + birdHeight, fromIntegral bottom1 - birdHeight)
+        , (fromIntegral top2 + birdHeight, fromIntegral bottom2 - birdHeight)
+        ]
 
 pipeAt :: Index ScreenWidth -> St -> (Index ScreenHeight, Index ScreenHeight, Index 64)
 pipeAt x MkSt{..} = (top, bottom, offset)
   where
-    idx :: Index 10
-    (idx, offset) = bitCoerce (satAdd SatWrap x pipeOffset)
-    (top, bottom) = pipes !! idx
+    idx :: Index NumPipes
+    gap :: Index PipeGap
+    (idx, gap, offset) = bitCoerce (satAdd SatWrap (fromIntegral x) pipeOffset)
+
+    (top, bottom)
+        | gap == maxBound = pipes !! idx
+        | otherwise = (minBound, maxBound)
 
 draw :: St -> Index ScreenWidth -> Index ScreenHeight -> Color
 draw st@MkSt{..} x y
