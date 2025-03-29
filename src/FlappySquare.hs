@@ -3,26 +3,26 @@ module FlappySquare where
 
 import Clash.Prelude
 import RetroClash.VGA640x480 (Color, ScreenWidth, ScreenHeight, between)
+import Clash.Class.Counter
 
 type PipeGap = 4
 type PipeWidth = 64
 type NumPipes = 4
 
-
 data St = MkSt
-    { birdY      :: !(Signed 10)
-    , birdSpeed  :: !(Signed 10)
-    , pipeOffset :: !(Index (NumPipes * PipeWidth * PipeGap))
-    , gameOver   :: !Bool
+    { birdY :: !(Signed 10)
+    , birdSpeed :: !(Signed 10)
+    , scrollOffset :: !(Index (NumPipes * PipeWidth * PipeGap))
+    , gameOver :: !Bool
     }
     deriving (Show, Generic, NFDataX)
 
 initState :: St
 initState = MkSt
-    { pipeOffset = 0
-    , birdSpeed  = 0
-    , birdY      = 200
-    , gameOver   = False
+    { birdY = 200
+    , birdSpeed = 0
+    , scrollOffset = 0
+    , gameOver = False
     }
 
 birdX :: Index ScreenWidth
@@ -49,7 +49,7 @@ updateState :: Bool -> St -> St
 updateState btn st@MkSt{..}
     | gameOver = initState
     | otherwise = st
-        { pipeOffset = satAdd SatWrap 1 pipeOffset
+        { scrollOffset = countSucc scrollOffset
         , birdSpeed = if btn then birdSpeed - 5 else birdSpeed + 1
         , birdY = birdY + birdSpeed `shiftR` 3
         , gameOver = not birdClear
@@ -67,7 +67,7 @@ pipeAt x MkSt{..} = (top, bottom, offset)
   where
     idx :: Index NumPipes
     gap :: Index PipeGap
-    (idx, gap, offset) = bitCoerce (satAdd SatWrap (fromIntegral x) pipeOffset)
+    (idx, gap, offset) = bitCoerce (satAdd SatWrap (fromIntegral x) scrollOffset)
 
     (top, bottom)
         | gap == maxBound = pipes !! idx
