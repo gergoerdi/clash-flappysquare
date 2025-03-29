@@ -1,11 +1,11 @@
 module Top(
-           input        CLK100MHZ,
-           input        BTNU,
-           output       VGA_HS,
-           output       VGA_VS,
-           output [3:0] VGA_R,
-           output [3:0] VGA_G,
-           output [3:0] VGA_B
+           input  wire       CLK100MHZ,
+           input  wire       BTNU,
+           output wire       VGA_HS,
+           output wire       VGA_VS,
+           output wire [3:0] VGA_R,
+           output wire [3:0] VGA_G,
+           output wire [3:0] VGA_B
            );
 
    wire                 CLK_25MHZ_RAW;
