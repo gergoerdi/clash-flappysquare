@@ -49,7 +49,7 @@ main = withRunner $ \runCycle -> do
         return $ rasterizeBuffer buf
   where
     videoParams = MkVideoParams
-        { windowTitle = "Pong (Verilator)"
+        { windowTitle = "Flappy Square (Verilator)"
         , screenScale = 2
         , screenRefreshRate = 60
         , reportFPS = True

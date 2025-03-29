@@ -37,7 +37,7 @@ main = do
         return $ rasterizeBuffer buf
   where
     videoParams = MkVideoParams
-        { windowTitle = "Pong (Clash)"
+        { windowTitle = "Flappy Square (Clash)"
         , screenScale = 2
         , screenRefreshRate = 60
         , reportFPS = True
