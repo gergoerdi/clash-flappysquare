@@ -73,14 +73,17 @@ draw st@MkSt{..} x y
     isPipe = not (y `between` (top, bottom))
     (top, bottom, offset) = pipeAt x st
     pipeColor
-      | offset < 2  = gray
-      | offset < 10 = lightGreen
-      | otherwise   = green
+        | offset < (minBound + 2)  = gray
+        | offset < 10              = lightGreen
+        | offset > (maxBound - 2)  = gray
+        | offset > (maxBound - 10) = darkGreen
+        | otherwise                = green
 
-blue, yellow, red, gray, green, lightGreen :: Color
+blue, yellow, red, gray, green, lightGreen, darkGreen :: Color
 blue = (0x40, 0x80, 0xf0)
 yellow = (0xf0, 0xe0, 0x40)
 red = (0x80, 0x00, 0x00)
 green = (0x92, 0xe2, 0x44)
 lightGreen = (0xa5, 0xff, 0x4d)
+darkGreen = (0x73,0xb3, 0x36)
 gray = (0x30, 0x30, 0x30)
