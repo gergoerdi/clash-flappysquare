@@ -7,4 +7,4 @@ extra-deps:
   - retroclash-lib-0.1.2.3
   - retroclash-sim-0.1.2
   - clashilator-0.1.4
-  - clash-shake-0.3.2
+  - clash-shake-0.4.0

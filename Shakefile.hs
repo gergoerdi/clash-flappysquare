@@ -2,7 +2,8 @@
 import Clash.Shake
 import Clash.Shake.Xilinx as Xilinx
 import Clash.Shake.Intel as Intel
-import qualified Clash.Shake.SymbiFlow as F4PGA
+import qualified Clash.Shake.F4PGA as F4PGA
+import Clash.Shake.ECP5 as ECP5
 
 import Development.Shake
 import Development.Shake.FilePath
@@ -38,6 +39,8 @@ main = shakeArgs shakeOptions{ shakeFiles = outDir } do
             , ("papilio-one", "papilio-one", Xilinx.ise papilioOne, [])
             , ("de0-nano", "de0-nano", Intel.quartus de0Nano, [])
             , ("arrow-deca", "arrow-deca", Intel.quartus arrowDeca, ["Hardware.ArrowDeca.HDMI"])
+            , ("ulx3s-45f", "ulx3s", ECP5.ecp5 "45k", [])
+            , ("ulx3s-85f", "ulx3s", ECP5.ecp5 "85k", [])
             ]
 
     for_ boards \(name, targetName, synth, extraModules) -> do
@@ -50,6 +53,8 @@ main = shakeArgs shakeOptions{ shakeFiles = outDir } do
               return ()
             return extraKit
 
-        SynthKit{..} <- synth (kit <> extraKits) (outDir </> name </> "synth") targetDir "Top"
+        SynthKit{..} <- synth (kit <> extraKits) (outDir </> name </> "synth") "Top" do
+            staticFiles targetDir
+
         mapM_ (uncurry $ nestedPhony name) $
             ("bitfile", need [bitfile]):phonies

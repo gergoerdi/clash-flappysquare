@@ -61,12 +61,12 @@ packages:
   original:
     hackage: clashilator-0.1.4
 - completed:
-    hackage: clash-shake-0.3.2@sha256:f4b1951b8cba3b9a3febf095acc5e9162a03625dc524ad42680ee686bd571fbf,1822
+    hackage: clash-shake-0.4.0@sha256:9d671b5de3f7e42666c03606833ddd5e6f0f79043e6c2c69134da6dbb88c5e6a,1819
     pantry-tree:
-      sha256: 2b941c98520a9dff98c23dd76e9259cacfecd3d1b4bcff1014fffc0d70b82098
-      size: 852
+      sha256: a90da720335bacf944eebc5c87a150b06bd77b772b174715aa2727860eb78f21
+      size: 916
   original:
-    hackage: clash-shake-0.3.2
+    hackage: clash-shake-0.4.0
 snapshots:
 - completed:
     sha256: 7d4b649cf368f9076d8aa049aa44efe58950971d105892734e9957b2a26a2186
