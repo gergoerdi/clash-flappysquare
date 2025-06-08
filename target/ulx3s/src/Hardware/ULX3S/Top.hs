@@ -20,18 +20,18 @@ type DomVGA = Dom25
 
 topEntity
     :: "CLK_VGA"    ::: Clock DomVGA
-    -> "RESET_VGA"  ::: Reset DomVGA
-    -> "CLK_HDMI"   ::: Clock DomHDMI
-    -> "RESET_HDMI" ::: Reset DomHDMI
+    -> "RST_VGA"    ::: Reset DomVGA
+    -> "CLK_TMDS"   ::: Clock DomHDMI
+    -> "RST_TMDS"   ::: Reset DomHDMI
     -> "BTNS"       ::: Vec 7 (Signal DomVGA (Active High))
-    -> ( "GPDI_DP"  ::: Signal DomHDMI (BitVector 4)
-       , "GPDI_DN"  ::: Signal DomHDMI (BitVector 4)
-       )
-topEntity vgaClk vgaRst hdmiClk hdmiRst btns = differential $ fmap pack . bundle $
-    (tmds_r :> tmds_g :> tmds_b :> clockToBit vgaClk :> Nil)
+    -> "HDMI" ::: ( "DP"  ::: Signal DomHDMI (BitVector 4)
+                  , "DN"  ::: Signal DomHDMI (BitVector 4)
+                  )
+topEntity clkVGA rstVGA clkTMDS rstTMDS btns = differential $ fmap pack . bundle $
+    (tmds_r :> tmds_g :> tmds_b :> clockToBit clkVGA :> Nil)
   where
+    vga = Flappy.topEntity clkVGA rstVGA btn
     btn = btns!!3
-    vga = Flappy.topEntity vgaClk vgaRst btn
-    (tmds_r, tmds_g, tmds_b) = serializeVGA hdmiClk hdmiRst enableGen vgaClk vga
+    (tmds_r, tmds_g, tmds_b) = serializeVGA clkTMDS rstTMDS enableGen clkVGA vga
 
-makeTopEntity 'topEntity
+makeTopEntityWithName 'topEntity "ulxTopEntity"
