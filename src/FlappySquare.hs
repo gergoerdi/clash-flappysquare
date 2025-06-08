@@ -88,7 +88,7 @@ draw st@MkSt{..} x y
     (top, bottom, offset) = pipeAt x st
     pipeColor
         | offset < (minBound + 2)  = gray
-        | offset < 10              = lightGreen
+        | offset < (minBound + 10) = lightGreen
         | offset > (maxBound - 2)  = gray
         | offset > (maxBound - 10) = darkGreen
         | otherwise                = green

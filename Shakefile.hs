@@ -40,7 +40,7 @@ main = shakeArgs shakeOptions{ shakeFiles = outDir } do
             , ("de0-nano", "de0-nano", Intel.quartus de0Nano, [])
             , ("arrow-deca", "arrow-deca", Intel.quartus arrowDeca, ["Hardware.ArrowDeca.HDMI"])
             , ("ulx3s-45f", "ulx3s", ECP5.ecp5 "45k", [])
-            , ("ulx3s-85f", "ulx3s", ECP5.ecp5 "85k", [])
+            , ("ulx3s-85f", "ulx3s", ECP5.ecp5 "85k", ["Hardware.ULX3S.Top"])
             ]
 
     for_ boards \(name, targetName, synth, extraModules) -> do

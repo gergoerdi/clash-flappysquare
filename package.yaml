@@ -24,6 +24,10 @@ dependencies:
 
   - retroclash-lib ^>= 0.1.2
 
+  - pretty-show
+  - string-interpolate
+  - infinite-list
+
 # Anything that Clash uses by default should go here
 default-extensions:
   - BinaryLiterals
