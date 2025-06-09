@@ -11,34 +11,37 @@ import RetroClash.Utils
 import RetroClash.VGA640x480
 
 serializeVGA
-    :: (KnownDomain hdmi, KnownDomain vga)
+    :: (KnownDomain hdmi, KnownDomain vga, DomainPeriod hdmi ~ DomainPeriod vga `Div` 10)
     => Clock hdmi -> Reset hdmi -> Enable hdmi
     -> Clock vga -> Reset vga
     -> VGAOut vga
     -> (Signal hdmi Bit, Signal hdmi Bit, Signal hdmi Bit)
-serializeVGA clk rst en clkPix rstPix VGAOut{ vgaSync = VGASync{..}, ..} = (r, g, b)
+serializeVGA clk rst en clkPix rstPix VGAOut{ vgaSync = VGASync{..}, ..} =
+    ( serialTMDS vgaR (0, 0)
+    , serialTMDS vgaG (0, 0)
+    , serialTMDS vgaB (vgaVSync, vgaHSync)
+    )
   where
-    r :> g :> b :> Nil = serialize clk rst en clkPix rgbs
-    rgbs =
-      (toTMDS clkPix rstPix (pack <$> vgaR) 0b00 vgaDE) :>
-      (toTMDS clkPix rstPix (pack <$> vgaG) 0b00 vgaDE) :>
-      (toTMDS clkPix rstPix (pack <$> vgaB) (pack <$> bundle (vgaVSync, vgaHSync)) vgaDE) :>
-      Nil
+    ser = serialize clk rst en clkPix
+    serialTMDS pixel ctrl = ser $ toTMDS clkPix rstPix (pack <$> pixel) (pack <$> bundle ctrl) vgaDE
 
+-- We bind `load` without `par` in scope to make sure it is shared
+-- when serializing multiple stream sin parallel.
 serialize
-    :: (KnownDomain ser, KnownDomain par, Functor f)
+    :: forall n ser par. (KnownDomain ser, KnownDomain par, DomainPeriod ser ~ DomainPeriod par `Div` n, KnownNat n)
     => Clock ser -> Reset ser -> Enable ser
     -> Clock par
-    -> f (Signal par (BitVector 8))
-    -> f (Signal ser Bit)
-serialize clk rst en clkPar = fmap (fmap lsb . ser)
+    -> Signal par (BitVector n)
+    -> Signal ser Bit
+serialize clk rst en clkPar = ser
   where
-    load = Ex.riseEvery clk rst en (SNat @10)
+    load = Ex.riseEvery clk rst en (SNat @n)
     shift = (0 +>>.)
 
-    ser par =
-      let r = Ex.register clk rst en 0 $ mux load (Ex.unsafeSynchronizer clkPar clk par) $ shift <$> r
-      in r
+    ser par = lsb <$> r
+      where
+        r = Ex.register clk rst en 0 $ mux load par' $ shift <$> r
+        par' = Ex.unsafeSynchronizer clkPar clk par
 
 differential
     :: (KnownNat n)
