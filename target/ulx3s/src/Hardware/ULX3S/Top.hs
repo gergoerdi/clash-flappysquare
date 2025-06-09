@@ -28,10 +28,10 @@ topEntity
                   , "DN"  ::: Signal DomHDMI (BitVector 4)
                   )
 topEntity clkVGA rstVGA clkTMDS rstTMDS btns = differential $ fmap pack . bundle $
-    (tmds_r :> tmds_g :> tmds_b :> clockToBit clkVGA :> Nil)
+    (clockToBit clkVGA :> tmds_r :> tmds_g :> tmds_b :> Nil)
   where
     vga = Flappy.topEntity clkVGA rstVGA btn
     btn = btns!!3
-    (tmds_r, tmds_g, tmds_b) = serializeVGA clkTMDS rstTMDS enableGen clkVGA vga
+    (tmds_r, tmds_g, tmds_b) = serializeVGA clkTMDS rstTMDS enableGen clkVGA rstVGA vga
 
 makeTopEntityWithName 'topEntity "ulxTopEntity"
