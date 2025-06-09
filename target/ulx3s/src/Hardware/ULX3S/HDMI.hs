@@ -13,16 +13,16 @@ import RetroClash.VGA640x480
 serializeVGA
     :: (KnownDomain hdmi, KnownDomain vga)
     => Clock hdmi -> Reset hdmi -> Enable hdmi
-    -> Clock vga
+    -> Clock vga -> Reset vga
     -> VGAOut vga
     -> (Signal hdmi Bit, Signal hdmi Bit, Signal hdmi Bit)
-serializeVGA clk rst en clkPix VGAOut{..} = (r, g, b)
+serializeVGA clk rst en clkPix rstPix VGAOut{ vgaSync = VGASync{..}, ..} = (r, g, b)
   where
     r :> g :> b :> Nil = serialize clk rst en clkPix rgbs
     rgbs =
-      (pack <$> vgaR) :>
-      (pack <$> vgaG) :>
-      (pack <$> vgaB) :>
+      (toTMDS clkPix rstPix (pack <$> vgaR) 0b00 vgaDE) :>
+      (toTMDS clkPix rstPix (pack <$> vgaG) 0b00 vgaDE) :>
+      (toTMDS clkPix rstPix (pack <$> vgaB) (pack <$> bundle (vgaVSync, vgaHSync)) vgaDE) :>
       Nil
 
 serialize
