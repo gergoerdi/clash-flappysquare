@@ -23,7 +23,8 @@ serializeVGA clk rst en clkPix rstPix VGAOut{ vgaSync = VGASync{..}, ..} =
     )
   where
     ser = serialize clk rst en clkPix
-    serialTMDS pixel ctrl = ser $ toTMDS clkPix rstPix (pack <$> pixel) (pack <$> bundle ctrl) vgaDE
+    serialTMDS pixel ctrl = ser $ withClockResetEnable clkPix rstPix enableGen $
+        toTMDS (pack <$> pixel) (pack <$> bundle ctrl) vgaDE
 
 -- We bind `load` without `par` in scope to make sure it is shared
 -- when serializing multiple stream sin parallel.

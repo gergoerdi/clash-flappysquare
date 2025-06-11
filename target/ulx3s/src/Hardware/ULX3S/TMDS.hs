@@ -2,18 +2,16 @@
 {-# LANGUAGE NumericUnderscores, LambdaCase, TupleSections #-}
 module Hardware.ULX3S.TMDS where
 
-import Clash.Explicit.Prelude hiding (scanr1)
+import Clash.Prelude hiding (scanr1)
 import Clash.Sized.Internal.BitVector (popCountBV)
 
 toTMDS
-    :: (KnownDomain system)
-    => Clock system
-    -> Reset system
-    -> Signal system (BitVector 8)
-    -> Signal system (BitVector 2)
-    -> Signal system Bool
-    -> Signal system (BitVector 10)
-toTMDS clk rst pixel ctrl de = tmdsEncode clk rst tmdsWord
+    :: (HiddenClockResetEnable dom)
+    => Signal dom (BitVector 8)
+    -> Signal dom (BitVector 2)
+    -> Signal dom Bool
+    -> Signal dom (BitVector 10)
+toTMDS pixel ctrl de = tmdsEncode tmdsWord
   where
     tmdsWord = mux de (Data <$> pixel) (Control <$> ctrl)
 
@@ -24,12 +22,10 @@ data TMDSWord
 
 {-# NOINLINE tmdsEncode #-}
 tmdsEncode
-    :: (KnownDomain dom)
-    => Clock dom
-    -> Reset dom
-    -> Signal dom TMDSWord
+    :: (HiddenClockResetEnable dom)
+    => Signal dom TMDSWord
     -> Signal dom (BitVector 10)
-tmdsEncode clk rst = delay clk enableGen 0 . mealy clk rst enableGen tmdsEncode1 0
+tmdsEncode = delay 0 . mealy tmdsEncode1 0
 
 tmdsEncode1 :: Signed 4 -> TMDSWord -> (Signed 4, BitVector 10)
 tmdsEncode1 acc = \case
