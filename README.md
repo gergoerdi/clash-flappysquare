@@ -5,7 +5,9 @@ as a software program (using SDL for input and graphics) and as a
 hardware FPGA design via Clash.
 
 This code is part of my talk *Clash: Haskell for FPGA Design: It's
-easy as 1-2-3...419,200* at Haskell eXchange 2022. 
+easy as 1-2-3...419,200* presented at Haskell eXchange 2022 and Lambda
+Days 2025.
+
 See <https://unsafePerform.IO/retroclash/flappy/> for futher details,
 including the slides from my talk.
 
@@ -50,11 +52,14 @@ of `VIVADO_ROOT`:
   * `nexys-a7-50t.f4pga`: Digilent Nexys A7-50T (Artix-7)
   * `basys-3`: Digilent Basys 3 (Artix-7)
 
-Bitfile can be built with e.g. `./mk papilio-pro/bitfile`. For some
-targets, a rule to upload the resulting bitfile is also included,
-e.g. `./mk arrow-deca/upload`.
+* Yosys open source toolchain
+  * `ulx3s-45f` and `ulx3s-85f`: Radiona ULX3S (ECP5)
 
-Adding support for other Intel, Xilinx, or F4PGA based FPGA dev boards
+Bitfile can be built with e.g. `./mk ulx3s-85f:bitfile`. For some
+targets, a rule to upload the resulting bitfile is also included,
+e.g. `./mk ulx3s-85f:upload`.
+
+Adding support for other FPGA dev boards that use the above toolchains
 is very straightforward with the included Shake rules, as long as they
 have VGA output and at least one input pushbutton.
 
@@ -62,3 +67,19 @@ Targeting other FPGA toolchains will require adding support in the
 Shake rules. Alternatively, you can always just run Clash, and import
 the resulting Verilog files into your FPGA toolchain in a
 non-automated way.
+
+## HDMI output
+
+Some dev boards have HDMI output instead of VGA. There are two
+different approaches implemented currently:
+
+* The Arrow DECA has an on-board HDMI encoder, which is configured by
+  the FPGA using I2C. See `target/arrow-deca/src` for the Clash
+  code that does the initialization.
+  
+* The ULX3S has the HDMI output pins connected directly to the
+  FPGA. We implement a VGA-to-HDMI serializer in `target/ulx3s/src`
+  that runs at 10x the VGA pixel clock speed.
+
+When adding support for a new board, use one of the above two sources
+for guidance.

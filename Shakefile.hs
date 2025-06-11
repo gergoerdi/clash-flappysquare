@@ -25,6 +25,7 @@ main = shakeArgs shakeOptions{ shakeFiles = outDir } do
         [ "src" ]
         "FlappySquare.Circuit"
         [ "-Wno-partial-type-signatures"
+        , "-Wunused-imports"
         , "-fclash-intwidth=32" -- To play nicely with Spartan 3 and 6
         ] $
         return ()
