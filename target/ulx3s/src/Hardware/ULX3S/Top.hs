@@ -4,7 +4,6 @@ module Hardware.ULX3S.Top (topEntity) where
 
 import Hardware.ULX3S.TMDS
 import Hardware.ULX3S.HDMI
-import Hardware.ULX3S.ClockToBit
 
 import Clash.Prelude
 import qualified Clash.Explicit.Prelude as Ex
@@ -19,19 +18,16 @@ createDomain vDom25{vName="DomHDMI", vPeriod = vPeriod vDom25 `div` 10 }
 type DomVGA = Dom25
 
 topEntity
-    :: "CLK_VGA"    ::: Clock DomVGA
-    -> "RST_VGA"    ::: Reset DomVGA
-    -> "CLK_TMDS"   ::: Clock DomHDMI
-    -> "RST_TMDS"   ::: Reset DomHDMI
-    -> "BTNS"       ::: Vec 7 (Signal DomVGA (Active High))
-    -> "HDMI" ::: ( "DP"  ::: Signal DomHDMI (BitVector 4)
-                  , "DN"  ::: Signal DomHDMI (BitVector 4)
-                  )
-topEntity clkVGA rstVGA clkTMDS rstTMDS btns = differential $ fmap pack . bundle $
-    (clockToBit clkVGA :> tmds_r :> tmds_g :> tmds_b :> Nil)
+    :: "CLK_VGA"  ::: Clock DomVGA
+    -> "RST_VGA"  ::: Reset DomVGA
+    -> "CLK_TMDS" ::: Clock DomHDMI
+    -> "RST_TMDS" ::: Reset DomHDMI
+    -> "BTNS"     ::: Vec 7 (Signal DomVGA (Active High))
+    -> "HDMI"     ::: HDMIOut DomHDMI
+topEntity clkVGA rstVGA clkTMDS rstTMDS btns = hdmi
   where
     vga = Flappy.topEntity clkVGA rstVGA btn
     btn = btns!!3
-    (tmds_r, tmds_g, tmds_b) = serializeVGA clkTMDS rstTMDS enableGen clkVGA rstVGA vga
+    hdmi = vgaToHDMI clkTMDS rstTMDS enableGen clkVGA rstVGA vga
 
 makeTopEntityWithName 'topEntity "ulxTopEntity"
