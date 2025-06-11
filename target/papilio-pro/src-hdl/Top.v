@@ -1,12 +1,12 @@
 module Top(
-           input        CLK_32MHZ,
-           input        BUTTON_UP,
-           input        BUTTON_DOWN,
-           output       VGA_VSYNC,
-           output       VGA_HSYNC,
-           output [3:0] VGA_RED,
-           output [3:0] VGA_GREEN,
-           output [3:0] VGA_BLUE
+           input wire        CLK_32MHZ,
+           input wire        BUTTON_UP,
+           input wire        BUTTON_DOWN,
+           output wire       VGA_VSYNC,
+           output wire       VGA_HSYNC,
+           output wire [3:0] VGA_RED,
+           output wire [3:0] VGA_GREEN,
+           output wire [3:0] VGA_BLUE
            );
 
    wire                 CLK_25MHZ;
@@ -28,8 +28,7 @@ module Top(
    topEntity u_topEntity
      (.CLK_25MHZ(CLK_25MHZ),
       .RESET(!CLK_LOCKED),
-      .BTN_UP(BUTTON_UP),
-      .BTN_DOWN(BUTTON_DOWN),
+      .BTN(BUTTON_UP),
       .VGA_VSYNC(VGA_VSYNC),
       .VGA_HSYNC(VGA_HSYNC),
       .VGA_RED(VGA_RED_FULL[7:0]),
